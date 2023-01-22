@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  fivem:
+    build: ./fxserver
+    image: fxserver
+    container_name: fxserver
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: "./fxserver/server-data"
+        target: "/opt/cfx-server/server-data/"
+      - type: volume
+        source: txData
+        target: "/opt/fxserver/server/txData"
+    ports:
+      - "30120:30120/tcp"
+      - "30120:30120/udp"
+      - "40121:40121/tcp"
+      - "40121:40121/udp"
+    working_dir: /opt/cfx-server/server-data/
+    command: "bash /opt/cfx-server/server/run.sh +set serverProfile dev_server +set txAdminPort 40121"
+
+  db:
+    image: mariadb
+    container_name: cfx-db
+    restart: always
+    environment:
+      MARIADB_DATABASE: cfx-db
+      MARIADB_USER: cfx-system
+      MARIADB_ROOT_PASSWORD: 2877db2e-9e14-5e5e-f108-4f6db70f9ba6
+
+volumes:
+  txData:
+    name: txData
